@@ -19,7 +19,7 @@ app.post("/register", (req, res) => {
   let password = req.body.password;
 
   db.oneOrNone("SELECT userid FROM users WHERE username = $1", [username]).then(
-    () => {
+    user => {
       if (user) {
         res.render("register", { message: "User name already exists!" });
       } else {
@@ -33,11 +33,6 @@ app.post("/register", (req, res) => {
       }
     }
   );
-
-  console.log(username);
-  console.log(password);
-
-  res.send("REGISTER");
 });
 
 app.get("/register", (req, res) => {

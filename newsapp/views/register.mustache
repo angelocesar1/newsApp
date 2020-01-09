@@ -48,6 +48,14 @@
     <input type="password" class="form-control" placeholder='Password' name='password'>
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
+
+    {{#message}}
+        <div class='alert alert-danger' role='alert'>
+        {{message}}
+        </div>
+    {{/message}}
+
+
 </form>
 
 </div>
