@@ -28,12 +28,28 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 const db = pgp(CONNECTION_STRING);
 
+app.post("/users/update-article", (req, res) => {
+  let title = req.body.title;
+  let description = req.body.description;
+  let articleId = req.body.articleId;
+
+  db.none("UPDATE articles SET title = $1, body = $2 WHERE articleid = $3", [
+    title,
+    description,
+    articleId
+  ]).then(() => {
+    res.redirect("/users/articles");
+  });
+});
+
 app.get("/users/articles/edit/:articleId", (req, res) => {
-  let articleid = req.params.articleId;
+  let articleId = req.params.articleId;
 
   db.one("SELECT articleid,title,body FROM articles WHERE articleid = $1", [
     articleId
-  ]);
+  ]).then(article => {
+    res.render("edit-article", article);
+  });
 });
 
 app.get("/users/add-article", (req, res) => {
