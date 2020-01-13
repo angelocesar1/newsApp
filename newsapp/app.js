@@ -15,6 +15,7 @@ const VIEWS_PATH = path.join(__dirname, "/views");
 app.engine("mustache", mustacheExpress(VIEWS_PATH + "/partials", ".mustache"));
 app.set("views", VIEWS_PATH);
 app.set("view engine", "mustache");
+app.use("/css", express.static("css"));
 
 app.use(
   session({
@@ -27,6 +28,14 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const db = pgp(CONNECTION_STRING);
+
+app.post("/users/delete-article", (req, res) => {
+  let articleId = req.body.articleId;
+
+  db.none("DELETE FROM articles WHERE articleid = $1", [articleId]).then(() => {
+    res.redirect("/users/articles");
+  });
+});
 
 app.post("/users/update-article", (req, res) => {
   let title = req.body.title;
