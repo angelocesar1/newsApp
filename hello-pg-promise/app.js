@@ -3,12 +3,12 @@ const connectionString = "postgres://localhost:5432/nailasgarden";
 const db = pgp(connectionString);
 
 ////////////////////////////////
-// DELETE
-db.none("DELETE FROM dishes WHERE dishid = $1", [9])
-  .then(() => {
-    console.log("DELETED");
-  })
-  .catch(error => console.log(error));
+// // DELETE
+// db.none("DELETE FROM dishes WHERE dishid = $1", [9])
+//   .then(() => {
+//     console.log("DELETED");
+//   })
+//   .catch(error => console.log(error));
 
 ////////////////////////////////
 // UPDATE

@@ -28,8 +28,42 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 const db = pgp(CONNECTION_STRING);
 
+app.get("/users/articles/edit/:articleId", (req, res) => {
+  let articleid = req.params.articleId;
+
+  db.one("SELECT articleid,title,body FROM articles WHERE articleid = $1", [
+    articleId
+  ]);
+});
+
+app.get("/users/add-article", (req, res) => {
+  res.render("add-article");
+});
+
+app.post("/users/add-article", (req, res) => {
+  let title = req.body.title;
+  let description = req.body.description;
+  let userId = req.session.user.userId;
+
+  db.none("INSERT INTO articles(title,body,userid) VALUES($1,$2,$3)", [
+    title,
+    description,
+    userId
+  ]).then(() => {
+    res.send("SUCCESS");
+  });
+});
+
 app.get("/users/articles", (req, res) => {
-  res.render("articles", { username: req.session.user.username });
+  // let userId = req.session.user.userId;
+
+  let userId = 2;
+
+  db.any("SELECT articleid,title,body FROM articles WHERE userid = $1", [
+    userId
+  ]).then(articles => {
+    res.render("articles", { articles: articles });
+  });
 });
 
 app.get("/login", (req, res) => {
@@ -50,7 +84,7 @@ app.post("/login", (req, res) => {
         if (result) {
           // put username and userid in the session
           if (req.session) {
-            req.session.user = { userId: user.userId, username: user.username };
+            req.session.user = { userId: user.userid, username: user.username };
           }
 
           res.redirect("/users/articles");
