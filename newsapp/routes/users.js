@@ -1,12 +1,19 @@
 const express = require("express");
 const router = express.Router();
 
-router.post("/delete-article", (req, res) => {
-  let articleId = req.body.articleId;
+// router.post("/delete-article", (req, res) => {
+//   let articleId = req.body.articleId;
 
-  db.none("DELETE FROM articles WHERE articleid = $1", [articleId]).then(() => {
-    res.redirect("/users/articles");
-  });
+//   db.none("DELETE FROM articles WHERE articleid = $1", [articleId]).then(() => {
+//     res.redirect("/users/articles");
+//   });
+// });
+
+// async and await function
+router.post("/delete-article", async (req, res) => {
+  let articleId = req.body.articleId;
+  await db.none("DELETE FROM articles WHERE articleid = $1", [articleId]);
+  res.redirect("/users/articles");
 });
 
 router.get("/add-article", (req, res) => {
@@ -23,7 +30,7 @@ router.post("/add-article", (req, res) => {
     description,
     userId
   ]).then(() => {
-    res.send("SUCCESS");
+    res.redirect("/users/articles");
   });
 });
 

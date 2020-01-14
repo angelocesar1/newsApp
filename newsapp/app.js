@@ -6,6 +6,7 @@ const pgp = require("pg-promise")();
 const path = require("path");
 const session = require("express-session");
 const userRoutes = require("./routes/users");
+const checkAuthorization = require("./utils/authorization");
 const indexRoutes = require("./routes/index");
 const CONNECTION_STRING = "postgres://localhost:5432/newsdb";
 const SALT_ROUNDS = 10;
@@ -28,10 +29,15 @@ app.use(
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use((req, res, next) => {
+  res.locals.authenticated = req.session.user == null ? false : true;
+  next();
+});
+
 db = pgp(CONNECTION_STRING);
 
 // setup routes
-app.use("/users", userRoutes);
+app.use("/users", checkAuthorization, userRoutes);
 app.use("/", indexRoutes);
 
 app.listen(3000, () => {
